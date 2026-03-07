@@ -234,7 +234,42 @@ http://localhost:8081/h2-console
 
 ```
 
-<img width="403" height="900" alt="imagen" src="https://github.com/user-attachments/assets/f1771467-b852-4103-97bd-c20dde2caec9" />
+## 📂 Estructura del Proyecto
+
+```text
+POLIZAS-API
+├── 📂 src
+│   ├── 📂 main
+│   │   ├── 📂 java
+│   │   │   └── 📂 com.polizas
+│   │   │       ├── 📂 controller
+│   │   │       │   ├── CoreMockController.java
+│   │   │       │   ├── HealthController.java
+│   │   │       │   └── PolizaController.java
+│   │   │       ├── 📂 model
+│   │   │       │   ├── Poliza.java
+│   │   │       │   └── Riesgo.java
+│   │   │       ├── 📂 repository
+│   │   │       │   ├── PolizaRepository.java
+│   │   │       │   └── RiesgoRepository.java
+│   │   │       ├── 📂 security
+│   │   │       ├── 📂 service
+│   │   │       │   └── PolizaService.java
+│   │   │       └── PolizasApiApplication.java
+│   │   └── 📂 resources
+│   │       ├── 📂 static
+│   │       ├── 📂 templates
+│   │       └── application.properties
+│   └── 📂 test
+├── 📂 target
+├── .gitattributes
+├── .gitignore
+├── Dockerfile
+├── HELP.md
+├── mvnw
+├── mvnw.cmd
+└── pom.xml
+
 
 ```
 
