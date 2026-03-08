@@ -14,9 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.net.URI;
 
 @RestController
-@RequestMapping("/polizas")
+@RequestMapping("/api/v1/polizas")
 public class PolizaController {
 
     private final PolizaRepository repo;
@@ -35,11 +36,17 @@ public class PolizaController {
 
     @Operation(summary = "Crear una nueva póliza")
     @PostMapping
-    public Poliza crear(@Valid @RequestBody Poliza poliza){
+    public ResponseEntity<Poliza> crear(@Valid @RequestBody Poliza poliza){
 
         poliza.setEstado(EstadoPoliza.ACTIVA);
 
-        return repo.save(poliza);
+        Poliza nueva = repo.save(poliza);
+
+        URI location = URI.create("/api/v1/polizas/" + nueva.getId());
+
+        return ResponseEntity
+                .created(location)
+                .body(nueva);
     }
 
     @Operation(summary = "Obtener póliza por ID")
