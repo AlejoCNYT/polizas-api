@@ -6,6 +6,8 @@ import com.polizas.repository.PolizaRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class PolizaService {
 
@@ -17,16 +19,23 @@ public class PolizaService {
 
     public Poliza renovar(Long id){
 
-        Poliza p = repo.findById(id).orElseThrow();
+        Poliza p = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
 
         if("CANCELADA".equals(p.getEstado())){
             throw new RuntimeException("No se puede renovar una póliza cancelada");
         }
 
-        double ipc = 0.10;
+        BigDecimal ipc = new BigDecimal("0.10");
 
-        p.setCanonMensual(p.getCanonMensual() * (1 + ipc));
-        p.setPrima(p.getPrima() * (1 + ipc));
+        p.setCanonMensual(
+                p.getCanonMensual().multiply(BigDecimal.ONE.add(ipc))
+        );
+
+        p.setPrima(
+                p.getPrima().multiply(BigDecimal.ONE.add(ipc))
+        );
+
         p.setEstado("RENOVADA");
 
         return repo.save(p);
@@ -34,7 +43,8 @@ public class PolizaService {
 
     public Poliza agregarRiesgo(Long id, Riesgo riesgo){
 
-        Poliza poliza = repo.findById(id).orElseThrow();
+        Poliza poliza = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
 
         // regla: póliza individual solo puede tener un riesgo
         if("INDIVIDUAL".equals(poliza.getTipo()) && !poliza.getRiesgos().isEmpty()){

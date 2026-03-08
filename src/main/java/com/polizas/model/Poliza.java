@@ -2,6 +2,8 @@ package com.polizas.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +19,13 @@ public class Poliza {
 
     private String estado;
 
-    @Positive(message = "El canon mensual debe ser mayor a 0")
-    private double canonMensual;
+    @NotNull
+    @DecimalMin(value = "0.01", message = "El canon mensual debe ser mayor a 0")
+    private BigDecimal canonMensual;
 
-    @Positive(message = "La prima debe ser mayor a 0")
-    private double prima;
+    @NotNull
+    @DecimalMin(value = "0.01", message = "La prima debe ser mayor a 0")
+    private BigDecimal prima;
 
     @OneToMany(mappedBy = "poliza", cascade = CascadeType.ALL)
     private List<Riesgo> riesgos = new ArrayList<>();
@@ -46,19 +50,19 @@ public class Poliza {
         this.estado = estado;
     }
 
-    public double getCanonMensual() {
+    public BigDecimal getCanonMensual() {
         return canonMensual;
     }
 
-    public void setCanonMensual(double canonMensual) {
+    public void setCanonMensual(BigDecimal canonMensual) {
         this.canonMensual = canonMensual;
     }
 
-    public double getPrima() {
+    public BigDecimal getPrima() {
         return prima;
     }
 
-    public void setPrima(double prima) {
+    public void setPrima(BigDecimal prima) {
         this.prima = prima;
     }
 
