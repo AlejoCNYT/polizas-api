@@ -2,6 +2,7 @@ package com.polizas.service;
 
 import com.polizas.model.Riesgo;
 import com.polizas.model.Poliza;
+import com.polizas.model.EstadoPoliza;
 import com.polizas.repository.PolizaRepository;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class PolizaService {
         Poliza p = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
 
-        if("CANCELADA".equals(p.getEstado())){
+        if(p.getEstado() == EstadoPoliza.CANCELADA){
             throw new RuntimeException("No se puede renovar una póliza cancelada");
         }
 
@@ -36,7 +37,7 @@ public class PolizaService {
                 p.getPrima().multiply(BigDecimal.ONE.add(ipc))
         );
 
-        p.setEstado("RENOVADA");
+        p.setEstado(EstadoPoliza.RENOVADA);
 
         return repo.save(p);
     }
@@ -45,6 +46,10 @@ public class PolizaService {
 
         Poliza poliza = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
+
+        if(poliza.getEstado() == EstadoPoliza.CANCELADA){
+            throw new RuntimeException("No se pueden agregar riesgos a una póliza cancelada");
+        }
 
         // regla: póliza individual solo puede tener un riesgo
         if("INDIVIDUAL".equals(poliza.getTipo()) && !poliza.getRiesgos().isEmpty()){

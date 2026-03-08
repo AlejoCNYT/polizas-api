@@ -2,6 +2,7 @@ package com.polizas.controller;
 
 import com.polizas.model.Riesgo;
 import com.polizas.model.Poliza;
+import com.polizas.model.EstadoPoliza;
 import com.polizas.repository.PolizaRepository;
 import com.polizas.service.PolizaService;
 
@@ -36,7 +37,7 @@ public class PolizaController {
     @PostMapping
     public Poliza crear(@Valid @RequestBody Poliza poliza){
 
-        poliza.setEstado("ACTIVA");
+        poliza.setEstado(EstadoPoliza.ACTIVA);
 
         return repo.save(poliza);
     }
@@ -69,7 +70,7 @@ public class PolizaController {
         Poliza p = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
 
-        p.setEstado("CANCELADA");
+        p.setEstado(EstadoPoliza.CANCELADA);
 
         if(p.getRiesgos() != null){
             p.getRiesgos().forEach(r -> r.setEstado("CANCELADO"));

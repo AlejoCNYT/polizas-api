@@ -17,7 +17,8 @@ public class Poliza {
     @NotNull(message = "El tipo de póliza es obligatorio")
     private String tipo;
 
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private EstadoPoliza estado;
 
     @NotNull
     @DecimalMin(value = "0.01", message = "El canon mensual debe ser mayor a 0")
@@ -42,11 +43,11 @@ public class Poliza {
         this.tipo = tipo;
     }
 
-    public String getEstado() {
+    public EstadoPoliza getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoPoliza estado) {
         this.estado = estado;
     }
 
