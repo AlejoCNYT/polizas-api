@@ -28,9 +28,25 @@ public class PolizaController {
         this.service = service;
     }
 
-    @Operation(summary = "Listar todas las pólizas")
+    @Operation(summary = "Listar pólizas (opcionalmente filtrar por tipo y/o estado)")
     @GetMapping
-    public List<Poliza> listar(){
+    public List<Poliza> listar(
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) EstadoPoliza estado
+    ){
+
+        if(tipo != null && estado != null){
+            return repo.findByTipoAndEstado(tipo, estado);
+        }
+
+        if(tipo != null){
+            return repo.findByTipo(tipo);
+        }
+
+        if(estado != null){
+            return repo.findByEstado(estado);
+        }
+
         return repo.findAll();
     }
 
@@ -67,7 +83,6 @@ public class PolizaController {
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().build();
         }
-
     }
 
     @Operation(summary = "Cancelar póliza y todos sus riesgos")
@@ -98,7 +113,6 @@ public class PolizaController {
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().build();
         }
-
     }
 
     @Operation(summary = "Listar riesgos de una póliza")
@@ -109,5 +123,4 @@ public class PolizaController {
                 .map(poliza -> ResponseEntity.ok(poliza.getRiesgos()))
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }

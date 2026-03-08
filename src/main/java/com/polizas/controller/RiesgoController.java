@@ -3,10 +3,11 @@ package com.polizas.controller;
 import com.polizas.model.Riesgo;
 import com.polizas.repository.RiesgoRepository;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/riesgos")
+@RequestMapping("/api/v1/riesgos")
 public class RiesgoController {
 
     private final RiesgoRepository repo;
@@ -16,12 +17,14 @@ public class RiesgoController {
     }
 
     @PostMapping("/{id}/cancelar")
-    public Riesgo cancelar(@PathVariable Long id){
+    public ResponseEntity<Riesgo> cancelar(@PathVariable Long id){
 
-        Riesgo riesgo = repo.findById(id).orElseThrow();
-
-        riesgo.setEstado("CANCELADO");
-
-        return repo.save(riesgo);
+        return repo.findById(id)
+                .map(riesgo -> {
+                    riesgo.setEstado("CANCELADO");
+                    return ResponseEntity.ok(repo.save(riesgo));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
+
 }

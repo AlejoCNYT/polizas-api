@@ -51,10 +51,16 @@ public class PolizaService {
             throw new RuntimeException("No se pueden agregar riesgos a una póliza cancelada");
         }
 
-        // regla: póliza individual solo puede tener un riesgo
+        // Regla actual: póliza INDIVIDUAL solo puede tener 1 riesgo
         if("INDIVIDUAL".equals(poliza.getTipo()) && !poliza.getRiesgos().isEmpty()){
             throw new RuntimeException("Una póliza individual solo puede tener un riesgo");
         }
+
+        // Si quieres la regla del enunciado "solo COLECTIVA puede agregar riesgos",
+        // reemplaza lo anterior por:
+        // if(!"COLECTIVA".equals(poliza.getTipo())){
+        //     throw new RuntimeException("Solo pólizas colectivas pueden agregar riesgos");
+        // }
 
         riesgo.setEstado("ACTIVO");
         riesgo.setPoliza(poliza);

@@ -23,12 +23,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Permitir swagger y H2
-        if (path.contains("swagger")
-                || path.contains("api-docs")
-                || path.contains("swagger-ui")
-                || path.contains("v3/api-docs")
-                || path.contains("h2-console")) {
+        // Endpoints públicos
+        if (path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/h2-console")
+                || path.startsWith("/health")) {
 
             filterChain.doFilter(request, response);
             return;
