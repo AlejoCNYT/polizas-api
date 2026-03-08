@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,40 +35,71 @@ public class PolizaController {
     @Operation(summary = "Crear una nueva póliza")
     @PostMapping
     public Poliza crear(@Valid @RequestBody Poliza poliza){
+
         poliza.setEstado("ACTIVA");
+
         return repo.save(poliza);
     }
 
     @Operation(summary = "Obtener póliza por ID")
     @GetMapping("/{id}")
-    public Poliza obtener(@PathVariable Long id){
-        return repo.findById(id).orElseThrow();
+    public ResponseEntity<Poliza> obtener(@PathVariable Long id){
+
+        return repo.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Renovar póliza aplicando incremento IPC")
     @PostMapping("/{id}/renovar")
-    public Poliza renovar(@PathVariable Long id){
-        return service.renovar(id);
+    public ResponseEntity<Poliza> renovar(@PathVariable Long id){
+
+        try{
+            return ResponseEntity.ok(service.renovar(id));
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
-    @Operation(summary = "Cancelar póliza")
+    @Operation(summary = "Cancelar póliza y todos sus riesgos")
     @PostMapping("/{id}/cancelar")
-    public Poliza cancelar(@PathVariable Long id){
+    public ResponseEntity<Poliza> cancelar(@PathVariable Long id){
 
-        Poliza p = repo.findById(id).orElseThrow();
+        Poliza p = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
 
         p.setEstado("CANCELADA");
 
-        return repo.save(p);
+        if(p.getRiesgos() != null){
+            p.getRiesgos().forEach(r -> r.setEstado("CANCELADO"));
+        }
+
+        return ResponseEntity.ok(repo.save(p));
     }
 
     @Operation(summary = "Agregar riesgo a una póliza")
     @PostMapping("/{id}/riesgos")
-    public Poliza agregarRiesgo(
+    public ResponseEntity<Poliza> agregarRiesgo(
             @PathVariable Long id,
             @Valid @RequestBody Riesgo riesgo
     ){
-        return service.agregarRiesgo(id, riesgo);
+
+        try{
+            return ResponseEntity.ok(service.agregarRiesgo(id, riesgo));
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
+    @Operation(summary = "Listar riesgos de una póliza")
+    @GetMapping("/{id}/riesgos")
+    public ResponseEntity<List<Riesgo>> obtenerRiesgos(@PathVariable Long id){
+
+        return repo.findById(id)
+                .map(poliza -> ResponseEntity.ok(poliza.getRiesgos()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }

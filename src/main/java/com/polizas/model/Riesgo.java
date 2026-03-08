@@ -14,8 +14,11 @@ public class Riesgo {
 
     private String arrendatario;
 
+    private String estado;
+
     @ManyToOne
     @JsonIgnore
+    @JoinColumn(name = "poliza_id")
     private Poliza poliza;
 
     public Long getId() {
@@ -26,24 +29,31 @@ public class Riesgo {
         return direccion;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
     public String getArrendatario() {
         return arrendatario;
     }
 
-    public void setArrendatario(String arrendatario) {
-        this.arrendatario = arrendatario;
+    public String getEstado() {
+        return estado;
     }
 
     public Poliza getPoliza() {
         return poliza;
     }
 
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public void setArrendatario(String arrendatario) {
+        this.arrendatario = arrendatario;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     public void setPoliza(Poliza poliza) {
         this.poliza = poliza;
     }
-
 }

@@ -3,6 +3,7 @@ package com.polizas.service;
 import com.polizas.model.Riesgo;
 import com.polizas.model.Poliza;
 import com.polizas.repository.PolizaRepository;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +25,8 @@ public class PolizaService {
 
         double ipc = 0.10;
 
-        p.setCanonMensual(p.getCanonMensual()*(1+ipc));
-        p.setPrima(p.getPrima()*(1+ipc));
+        p.setCanonMensual(p.getCanonMensual() * (1 + ipc));
+        p.setPrima(p.getPrima() * (1 + ipc));
         p.setEstado("RENOVADA");
 
         return repo.save(p);
@@ -35,12 +36,16 @@ public class PolizaService {
 
         Poliza poliza = repo.findById(id).orElseThrow();
 
+        // regla: póliza individual solo puede tener un riesgo
+        if("INDIVIDUAL".equals(poliza.getTipo()) && !poliza.getRiesgos().isEmpty()){
+            throw new RuntimeException("Una póliza individual solo puede tener un riesgo");
+        }
+
+        riesgo.setEstado("ACTIVO");
         riesgo.setPoliza(poliza);
 
         poliza.getRiesgos().add(riesgo);
 
         return repo.save(poliza);
-
     }
-
 }
